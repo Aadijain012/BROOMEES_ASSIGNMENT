@@ -1,219 +1,69 @@
 services:
-
   - type: web
-  
     name: broomees-api
-    
     runtime: docker
-    
     plan: free
-    
-    region: singapore
-    
+    region: oregon
     healthCheckPath: /api/health
-    
     dockerfilePath: ./Dockerfile
-    
     dockerContext: .
-    
     envVars:
-    
       - key: APP_NAME
-      
         value: Broomees
-        
       - key: APP_ENV
-      
         value: production
-        
       - key: APP_DEBUG
-      
         value: "false"
-        
       - key: APP_URL
-      
         sync: false
-        
       - key: APP_KEY
-      
         sync: false
-        
       - key: LOG_CHANNEL
-      
         value: stderr
-        
       - key: LOG_STDERR_FORMATTER
-      
         value: "Monolog\\Formatter\\JsonFormatter"
-        
       - key: DB_CONNECTION
-      
         value: pgsql
-        
       - key: DB_URL
-      
         fromDatabase:
-        
-          name: broomees-db-singapore
-          
+          name: broomees-db
           property: connectionString
-          
       - key: CACHE_STORE
-      
         value: redis
-        
       - key: REDIS_CLIENT
-      
         value: phpredis
-        
       - key: REDIS_URL
-      
         fromService:
-        
           type: keyvalue
-          
           name: broomees-cache
-          
           property: connectionString
-          
       - key: SESSION_DRIVER
-      
         value: database
-        
       - key: QUEUE_CONNECTION
-      
         value: database
-        
       - key: TOKEN_EXPIRATION
-      
         value: "1440"
-        
       - key: REPUTATION_DELETION_THRESHOLD
-      
         value: "10"
-        
       - key: READ_RATE_LIMIT
-      
         value: "120"
-        
       - key: WRITE_RATE_LIMIT
-      
         value: "30"
-        
       - key: DEFAULT_PER_PAGE
-      
         value: "20"
-        
       - key: MAX_PER_PAGE
-      
         value: "100"
-        
   - type: keyvalue
-  
     name: broomees-cache
-    
     plan: free
-    
     ipAllowList:
-    
       - source: 0.0.0.0/0
-      
         description: Allow the public free-tier web service to reach Key Value.
-        
     maxmemoryPolicy: noeviction
-    
     persistenceMode: off
-    
-
 
 databases:
-
   - name: broomees-db
-  
     plan: free
-    
     databaseName: broomees
-    
     user: broomees
-    
-  - name: broomees-db-singapore
-  
-    plan: free
-    
-    region: singapore
-    
-    databaseName: broomees
-    
-    user: broomees
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

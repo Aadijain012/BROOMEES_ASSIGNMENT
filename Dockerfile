@@ -46,7 +46,7 @@ COPY docker/render/start.sh /usr/local/bin/broomees-start
 
 RUN chmod +x /usr/local/bin/broomees-start \
 
-    && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views \
+    && mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions storage/framework/views \
     
     && chown -R www-data:www-data storage bootstrap/cache
     

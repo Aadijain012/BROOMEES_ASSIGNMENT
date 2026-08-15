@@ -1,0 +1,97 @@
+/* Architectural Nightshift: graphite drafting-paper foundation with Blueprint Cobalt
+   (#4D67FF) as the singular system signal. Typography should feel editorial and exact. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+}
+
+:root {
+  --background: oklch(0.118 0.009 265);
+  --foreground: oklch(0.94 0.008 268);
+  --card: oklch(0.15 0.012 265);
+  --card-foreground: oklch(0.94 0.008 268);
+  --popover: oklch(0.15 0.012 265);
+  --popover-foreground: oklch(0.94 0.008 268);
+  --primary: oklch(0.58 0.21 274);
+  --primary-foreground: oklch(0.98 0.005 274);
+  --secondary: oklch(0.19 0.014 265);
+  --secondary-foreground: oklch(0.88 0.012 266);
+  --muted: oklch(0.2 0.013 265);
+  --muted-foreground: oklch(0.67 0.02 265);
+  --accent: oklch(0.22 0.026 268);
+  --accent-foreground: oklch(0.94 0.008 268);
+  --destructive: oklch(0.64 0.2 25);
+  --destructive-foreground: oklch(0.98 0.004 25);
+  --border: oklch(0.25 0.013 265);
+  --input: oklch(0.24 0.013 265);
+  --ring: oklch(0.58 0.21 274);
+  --radius: 0;
+}
+
+* { border-color: var(--border); }
+
+html { background: #0b0d13; scroll-behavior: smooth; }
+
+body {
+  min-width: 320px;
+  background: #0b0d13;
+  color: #e8ebf5;
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button, a { -webkit-tap-highlight-color: transparent; }
+
+button:not(:disabled), [role="button"]:not([aria-disabled="true"]), a[href] { cursor: pointer; }
+
+::selection { background: rgba(77, 103, 255, .46); color: #fff; }
+
+.section-kicker {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #8794b4;
+}
+
+.focus-mode .focus-mode-hide { opacity: .35; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .blueprint-corner { animation: corner-in 520ms cubic-bezier(.23, 1, .32, 1) both; }
+  @keyframes corner-in { from { opacity: 0; transform: translate(6px, -6px); } to { opacity: 1; transform: translate(0,0); } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

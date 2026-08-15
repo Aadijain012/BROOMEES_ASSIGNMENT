@@ -39,13 +39,15 @@ class DatabaseSeeder extends Seeder
 
         $relationships = app(RelationshipService::class);
         foreach ([['alice', 'bob'], ['alice', 'carol'], ['bob', 'david'], ['elena', 'farhan'], ['grace', 'isha']] as [$left, $right]) {
-            $relationships->create($users[$left], $users[$right]->id);
+            if (! DB::table('relationships')->where('user_id', $users[$left]->id)->where('friend_id', $users[$right]->id)->exists()) {
+                $relationships->create($users[$left], $users[$right]->id);
+            }
         }
 
-        DB::table('blocked_relationships')->insert([
+        DB::table('blocked_relationships')->upsert([
             ['user_id' => $users['alice']->id, 'blocked_user_id' => $users['james']->id, 'created_at' => now()],
             ['user_id' => $users['farhan']->id, 'blocked_user_id' => $users['harry']->id, 'created_at' => now()],
-        ]);
+        ], ['user_id', 'blocked_user_id'], ['created_at']);
 
         app(ReputationService::class)->recalculateAll();
     }

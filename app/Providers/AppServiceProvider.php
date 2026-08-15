@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Support\ApiResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -22,8 +23,12 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(UrlGenerator $url): void
     {
+        if (app()->environment('production')) {
+            $url->forceScheme('https');
+        }
+
         foreach (['api-read', 'api-write'] as $limiter) {
             RateLimiter::for($limiter, function (Request $request) use ($limiter): Limit {
                 $tokenId = (string) optional($request->attributes->get('apiToken'))->id;

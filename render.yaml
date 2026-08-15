@@ -7,7 +7,6 @@ services:
     healthCheckPath: /api/health
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    preDeployCommand: php artisan migrate --force && php artisan db:seed --force && php artisan optimize:clear
     envVars:
       - key: APP_NAME
         value: Broomees
@@ -57,6 +56,9 @@ services:
   - type: keyvalue
     name: broomees-cache
     plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow the public free-tier web service to reach Key Value.
     maxmemoryPolicy: noeviction
     persistenceMode: off
 

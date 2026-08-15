@@ -48,7 +48,7 @@ The API runs at `http://localhost:8000`. Stop it with `docker compose down`.
 
 ## Render Free deployment
 
-The repository includes `render.yaml` and a root Dockerfile for Render’s free Docker web-service plan. Deploy the Blueprint from Render after connecting this GitHub repository. Enter `APP_KEY` and the generated Render service URL as `APP_URL` when prompted; Render provisionally manages the PostgreSQL and Key Value dependencies.
+The repository includes `render.yaml` and a root Dockerfile for Render’s free Docker web-service plan. Deploy the Blueprint from Render after connecting this GitHub repository. Enter `APP_KEY` and the generated Render service URL as `APP_URL` when prompted; Render provisionally manages the PostgreSQL and Key Value dependencies. Free web services cannot run a pre-deploy command, so the container startup script performs idempotent migrations, seed data initialization, and cache clearing before Nginx starts.
 
 Render Free is suitable for an assignment demo, not a durable production workload: the web service spins down after 15 minutes idle, the database expires after 30 days, Key Value has no persistent storage, and free plans cannot run a managed cron service. The API still recalculates reputation after each relevant write, while the full scheduled recalculation remains available in the codebase for an upgraded scheduler later.
 

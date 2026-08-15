@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: Broomees Relationship, Reputation & Access-Control API
+  version: 1.0.0
+  description: Secure Laravel API for users, mutual relationships, hobbies, reputation, and token-scoped rate limiting.
+servers:
+  - url: http://localhost:8000
+paths:
+  /api/health:
+    get:
+      summary: Health check
+      responses:
+        '200': { description: Application is healthy }
+  /api/auth/token:
+    post:
+      summary: Issue an expiring bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TokenRequest' }
+      responses:
+        '201': { description: Token issued, content: { application/json: { schema: { $ref: '#/components/schemas/Success' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/users:
+    get:
+      summary: List users with pagination and optional username search
+      security: [ { BearerToken: [] } ]
+      parameters:
+        - { name: page, in: query, schema: { type: integer, minimum: 1 } }
+        - { name: per_page, in: query, schema: { type: integer, minimum: 1, maximum: 100 } }
+        - { name: search, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Paginated users }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    post:
+      summary: Register a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserCreateRequest' }
+      responses:
+        '201': { description: User created }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /api/users/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      summary: Get a user with friends and hobbies
+      security: [ { BearerToken: [] } ]
+      responses:
+        '200': { description: User details }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    put:
+      summary: Update a user using optimistic locking
+      security: [ { BearerToken: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserUpdateRequest' }
+      responses:
+        '200': { description: User updated }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    delete:
+      summary: Delete an eligible user
+      security: [ { BearerToken: [] } ]
+      responses:
+        '204': { description: User deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+  /api/users/{id}/relationships:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    post:
+      summary: Create a mutual relationship
+      security: [ { BearerToken: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RelationshipRequest' }
+      responses:
+        '201': { description: Mutual relationship created }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    delete:
+      summary: Remove a mutual relationship
+      security: [ { BearerToken: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RelationshipRequest' }
+      responses:
+        '200': { description: Relationship removed }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+  /api/users/{id}/hobbies:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    post:
+      summary: Assign a hobby to a user
+      security: [ { BearerToken: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HobbyRequest' }
+      responses:
+        '201': { description: Hobby assigned }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    delete:
+      summary: Remove a hobby from a user
+      security: [ { BearerToken: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HobbyRequest' }
+      responses:
+        '200': { description: Hobby removed }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+  /api/metrics/reputation:
+    get:
+      summary: Get system-wide reputation metrics
+      security: [ { BearerToken: [] } ]
+      responses:
+        '200': { description: Aggregated reputation metrics }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+components:
+  securitySchemes:
+    BearerToken: { type: http, scheme: bearer, bearerFormat: opaque-token }
+  schemas:
+    TokenRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string, example: john }
+        password: { type: string, format: password, example: StrongPassword123! }
+    UserCreateRequest:
+      type: object
+      required: [username, age, password]
+      properties:
+        username: { type: string, example: john }
+        age: { type: integer, minimum: 13, maximum: 120, example: 25 }
+        password: { type: string, format: password, minLength: 12 }
+    UserUpdateRequest:
+      type: object
+      required: [version]
+      properties:
+        username: { type: string }
+        age: { type: integer, minimum: 13, maximum: 120 }
+        version: { type: integer, minimum: 1 }
+    RelationshipRequest:
+      type: object
+      required: [friend_id]
+      properties:
+        friend_id: { type: string, format: uuid }
+    HobbyRequest:
+      type: object
+      required: [hobby_id]
+      properties:
+        hobby_id: { type: string, format: uuid }
+    Success:
+      type: object
+      required: [success, data]
+      properties:
+        success: { type: boolean, example: true }
+        data: { type: object }
+        meta: { type: object }
+  responses:
+    BadRequest: { description: Validation error, malformed JSON, unsupported content type, or invalid UUID }
+    Unauthorized: { description: Missing, invalid, expired, or revoked token }
+    NotFound: { description: Resource not found }
+    Conflict: { description: Duplicate, locking, or deletion-rule conflict }
+    RateLimited: { description: Per-token limit exceeded; includes X-RateLimit and Retry-After headers }
